@@ -367,6 +367,20 @@ function show(page){
   $("scene").classList.toggle("on", page==="scene");
 }
 
+/* 外部素材載不到時（最常見：assets 資料夾沒跟著 index.html 一起放，
+   或是直接從壓縮檔裡開啟），明講原因，不要只留一片空海 */
+let assetFailShown = false;
+function assetFailed(){
+  if(assetFailShown) return;
+  assetFailShown = true;
+  const t = $("hint");
+  t.textContent = "魚的圖片載入失敗 —— 請確認 assets 資料夾和 index.html 放在同一層，而且是解壓縮後才開啟";
+  t.style.whiteSpace = "normal";
+  t.style.maxWidth = "80vw";
+  t.style.lineHeight = "1.7";
+  t.style.opacity = "1";
+}
+
 /* --- school of fish --- */
 function measure(){ W = window.innerWidth; H = window.innerHeight; }
 
@@ -568,6 +582,7 @@ function startSchool(){
     el.className="fish"; el.setAttribute("role","button"); el.tabIndex=0;
     el.setAttribute("aria-label","選這條魚");
     const img=new Image(); img.src=f.image; img.alt=""; el.appendChild(img);
+    img.addEventListener("error", assetFailed);
     const depth = Math.random();                 // 0 = 最遠, 1 = 最近
     const w = baseSize()*(0.40 + depth*0.88)*(f.scale || 1);
     el.style.width = w+"px";
